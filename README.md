@@ -1,5 +1,9 @@
 # checkmk-haproxy-localcheck
 
+its recommended to use the python version
+
+bash is slower then python but if you are on an old system you could use bash as well
+
 a localcheck to monitore haproxy 
 
 place here  /usr/lib/check_mk_agent/local 
