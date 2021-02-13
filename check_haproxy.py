@@ -1,42 +1,50 @@
-#!/bin/env python3
-import requests
-import csv
+#!/usr/bin/env python3
+import requests, csv, urllib3, sys
 # disable ssl warning
-import urllib3
 urllib3.disable_warnings()
 # define vars
-url = 'https://localhost/lbstatistik;csv'
-auth_u = 'user'
-auth_p = 'pass'
+URL = 'https://localhost/lbstatistik;csv'
+WIUser = ''
+WIPass = ''
 # define thresholds
-warn = 0.85
-crit = 0.90
+MWarnAt = 0.85
+MCritAt = 0.90
 # do check
-r = requests.get(url , verify=False , auth=(auth_u,auth_p))
-content = r.content
-out = content.splitlines()
-for entry in out:
-    line = entry.decode("utf-8")
-    if line.startswith('#'):
-        continue
-    linearr = line.split(',')
-    str_host = linearr[0]
-    str_conf = linearr[1]
-    str_onli = linearr[17]
-    s_cur = linearr[4]
-    s_max = linearr[5]
-    # calc thresholds
-    s_warn = round(int(s_max) * warn)
-    s_crit = round(int(s_max) * crit)
-    if str_onli == "UP" or str_onli == "OPEN":
-        if int(s_cur) < s_warn and int(s_cur) < s_crit:
-            status = "0"
-        if int(s_cur) >= s_warn:
-            status = "1"
-        if int(s_cur) >= s_crit:
-            status = "2"
-        if int(s_max) == 0 or int(s_cur) == 0:
-            status = "0"
+try:
+    if WIPass:
+        HARequest = requests.get(URL , verify=False , auth=(WIUser,WIPass))
     else:
-        status = "2"
-    print("{0} {1}-{2} - {3} {4}/{5} Sessions Host is {6}".format(status,str_host,str_conf,str_conf,s_cur,s_max,str_onli)) 
+        HARequest = requests.get(URL , verify=False)
+    HAContent = HARequest.content.splitlines()
+except:
+    print('error to connect to haproxy status page')
+    sys.exit(2)
+for Entry in HAContent:
+    try:
+        Line = Entry.decode("utf-8")
+        if Line.startswith('#'):
+            continue
+        LineArray = Line.split(',')
+        HaStatusName = LineArray[0]
+        HaStatusElement = LineArray[1]
+        HAStatusState = LineArray[17]
+        HASessionsCurrent = LineArray[4]
+        HASessionsMax = LineArray[5]
+        # calc thresholds
+        ThresholdWarning = round(int(HASessionsMax) * MWarnAt)
+        ThresholdCritical = round(int(HASessionsMax) * MCritAt)
+    except:
+        print('something went wrong check the output of your haproxy status page - could not declare vars')
+        sys.exit(3)
+    if HAStatusState == "UP" or HAStatusState == "OPEN":
+        if int(HASessionsCurrent) < ThresholdWarning and int(HASessionsCurrent) < ThresholdCritical:
+            CheckStatus = "0"
+        if int(HASessionsCurrent) >= ThresholdWarning:
+            CheckStatus = "1"
+        if int(HASessionsCurrent) >= ThresholdCritical:
+            CheckStatus = "2"
+        if int(HASessionsMax) == 0 or int(HASessionsCurrent) == 0:
+            CheckStatus = "0"
+    else:
+        CheckStatus = "2"
+    print("{0} {1}-{2} - {2} {3}/{4} Sessions Host is {5}".format(CheckStatus,HaStatusName,HaStatusElement,HASessionsCurrent,HASessionsMax,HAStatusState)) 
