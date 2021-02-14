@@ -7,43 +7,79 @@ $MCritAt = 0.90
 try {
     If ($WIPass){
     $ParaIW = @{
-        URI = "https://localhost/lbstatistik;csv"
+        URI = 'https://localhost/lbstatistik;csv'
         SkipCertificateCheck = $true # if you use ssl
-        Credential = (New-Object System.Management.Automation.PSCredential($WIUser,(ConvertTo-SecureString $WIPass -AsPlainText -Force)))
+        Credential = (New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($WIUser,(ConvertTo-SecureString -String $WIPass -AsPlainText -Force)))
         }
     } else {
-        $ParaIW = @{
-            URI = "https://localhost/lbstatistik;csv"
-            SkipCertificateCheck = $true # if you use ssl
+    $ParaIW = @{
+        URI = 'https://localhost/lbstatistik;csv'
+        SkipCertificateCheck = $true # if you use ssl
         }
     }
     # check if target reachable .. if not exit
     $HAContent = (Invoke-WebRequest @ParaIW)
     $HAArray = (($HAContent).content -split('\n'))
 } catch {
-    Write-Output "Error to connect to haproxy status page"
+    #region ErrorHandler
+    # get error record
+    [Management.Automation.ErrorRecord]$e = $_
+    # retrieve information about runtime error
+    $info = [PSCustomObject]@{
+        Exception = $e.Exception.Message
+        Reason    = $e.CategoryInfo.Reason
+        Target    = $e.CategoryInfo.TargetName
+        Script    = $e.InvocationInfo.ScriptName
+        Line      = $e.InvocationInfo.ScriptLineNumber
+        Column    = $e.InvocationInfo.OffsetInLine
+    }
+    $info | Out-String | Write-Verbose
+    Write-Error -Message ($info.Exception) -ErrorAction Continue
+    # Only here to catch a global ErrorAction overwrite
+    #endregion ErrorHandler
+    Write-Error -Message 'Error to connect to haproxy status page' -ErrorAction Stop -Category ResourceUnavailable -ErrorId 2
     exit 2
+} finally {
+    [gc]::Collect()
 }
 foreach ($LineInArray in $HAArray){
     try { $LineArrayElements = $LineInArray -split(',') } catch { write-output 'Wrong HAProxy Version ?'}
-        if ([string]::IsNullOrEmpty($LineArrayElements[0]) -or $LineArrayElements[0].Substring(0,1) -eq '#'){
+        if (([string]::IsNullOrEmpty($LineArrayElements[0])) -or ($LineArrayElements[0].Substring(0,1) -eq '#')){
             # skip if line starts with an # or the first string is empty or null
             continue
         }
         try {
-            $HaStatusName = $LineArrayElements[0]
-            $HaStatusElement = $LineArrayElements[1]
-            $HAStatusState = $LineArrayElements[17]
+            [string]$HaStatusName = $LineArrayElements[0]
+            [string]$HaStatusElement = $LineArrayElements[1]
+            [string]$HAStatusState = $LineArrayElements[17]
             [int]$HASessionsCurrent = [convert]::ToInt32($LineArrayElements[4])
             [int]$HASessionsMax = [convert]::ToInt32($LineArrayElements[5])
             # calc thresholds
-            $ThresholdWarning = [math]::Round($HASessionsMax * $MWarnAt)
-            $ThresholdCritical = [math]::Round($HASessionsMax * $MCritAt)
+            [int]$ThresholdWarning = [math]::Round($HASessionsMax * $MWarnAt)
+            [int]$ThresholdCritical = [math]::Round($HASessionsMax * $MCritAt)
         } catch {
-            Write-Output 'something went wrong check the output of your haproxy status page - could not declare vars'
+            #region ErrorHandler
+            # get error record
+            [Management.Automation.ErrorRecord]$e = $_
+            # retrieve information about runtime error
+            $info = [PSCustomObject]@{
+                Exception = $e.Exception.Message
+                Reason    = $e.CategoryInfo.Reason
+                Target    = $e.CategoryInfo.TargetName
+                Script    = $e.InvocationInfo.ScriptName
+                Line      = $e.InvocationInfo.ScriptLineNumber
+                Column    = $e.InvocationInfo.OffsetInLine
+            }
+            $info | Out-String | Write-Verbose
+            Write-Error -Message ($info.Exception) -ErrorAction Continue
+            # Only here to catch a global ErrorAction overwrite
+            #endregion ErrorHandler
+            Write-Error -Message 'something went wrong check the output of your haproxy status page - could not declare vars' -ErrorAction Stop -Category InvalidData -ErrorId 3
             exit 3
+        } finally {
+            [gc]::Collect()
         }
-        if (($HAStatusState -ne 'UP') -or ($HAStatusState -ne 'OPEN')){
+        if (($HAStatusState -eq 'UP') -or ($HAStatusState -eq 'OPEN')){
             switch ($HASessionsCurrent){
                 {($_ -lt $ThresholdWarning) -and ($_ -lt $ThresholdCritical)}     { $CheckStatus = '0' }
                 {($_ -ge $ThresholdWarning) -and ($_ -lt $ThresholdCritical)}     { $CheckStatus = '1' }
