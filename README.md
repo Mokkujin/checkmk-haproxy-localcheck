@@ -6,13 +6,19 @@ bash is slower then python but if you are on an old system you could use bash as
 
 a localcheck to monitore haproxy 
 
-place here  /usr/lib/check_mk_agent/local 
+---
 
-restart check_mk_agent
+## Install it
 
-do an service discover in WATO
+1. place here  /usr/lib/check_mk_agent/local 
 
-sure you have to enable the status page on haproxy first ;)
+2. restart check_mk_agent
+
+3. do an service discover in WATO
+
+---
+
+## sure you have to enable the status page on haproxy first ;)
 
 for example:
 ```bash
