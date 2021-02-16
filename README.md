@@ -26,3 +26,5 @@ listen status
     http-request allow if stats localhost
     http-request deny  if stats !localhost
 ```
+
+Contributor : [@jhochwald](https://github.com/jhochwald)
