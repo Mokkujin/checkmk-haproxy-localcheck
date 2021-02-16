@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import requests, csv, urllib3, sys
+import requests, urllib3, sys
 # disable ssl warning
 urllib3.disable_warnings()
 # define vars
