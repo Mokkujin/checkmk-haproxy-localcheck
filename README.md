@@ -19,9 +19,10 @@
 
 ## info
 
+a localcheck to monitore haproxy
+
 bash is slower then python but if you are on an old system you could use bash as well
 last but not least i created the same job an powershell version Why :wink: ? Because i can :smirk:
-a localcheck to monitore haproxy
 
 ---
 
