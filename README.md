@@ -3,20 +3,8 @@
 ## TL;DR
 
 1. place here  /usr/lib/check_mk_agent/local 
-
 2. wait or restart the check_mk_agent
-
 3. do an service discover in WATO
-
----
-
-## info
-
-bash is slower then python but if you are on an old system you could use bash as well
-
-last but not least i created the same job an powershell version ;) Why ? Because i can :-)
-
-a localcheck to monitore haproxy
 
 ---
 
@@ -26,6 +14,14 @@ a localcheck to monitore haproxy
 * copy the file **check_haproxy.py** to **/usr/lib/check_mk_agent/local/**
 * wait or restart the check_mk_agent
 * do an **full scan** on the configured host in WATO
+
+---
+
+## info
+
+bash is slower then python but if you are on an old system you could use bash as well
+last but not least i created the same job an powershell version ;) Why ? Because i can :-)
+a localcheck to monitore haproxy
 
 ---
 
