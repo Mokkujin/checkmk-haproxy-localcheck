@@ -20,12 +20,12 @@
 ## info
 
 bash is slower then python but if you are on an old system you could use bash as well
-last but not least i created the same job an powershell version ;) Why ? Because i can :-)
+last but not least i created the same job an powershell version Why :wink: ? Because i can :smirk:
 a localcheck to monitore haproxy
 
 ---
 
-## sure you have to enable the status page on haproxy first ;)
+## sure you have to enable the status page on haproxy first
 
 for example:
 ```bash
