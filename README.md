@@ -11,7 +11,8 @@
 
 **check_haproxy.py** .. for sure needs **python3** :smirk:
 
-**check_haproxy_py2.py** .. use python2 for those people who obviously dont updated to the last stable version is an unsupported and untested version for the no longer supported Python 2.x branch. Use at your own risk.
+**check_haproxy_py2.py** .. use python2 for those people who obviously dont updated to the last stable version 
+> :warning: **check_haproxy_py2.py** : is an unsupported and untested version for the no longer supported Python 2.x branch. Use at your own risk.
 
 **check_haproxy.ps1** .. developed on powershell core for linux
 
