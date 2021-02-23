@@ -7,6 +7,9 @@
 3. do an service discover in WATO
 
 ---
+## requirements
+
+for sure needs **python3** :smirk:
 
 ## choose your version and install
 
