@@ -33,7 +33,7 @@ for line in $(curl -s ${status_URL} | grep -vE "#" ); do
     _scur=$(echo $line | ${awk_bin} -F',' '{ print $5; }' )
     _ol=$(echo $line | ${awk_bin} -F',' '{ print $18; }' )
     STATUS="${_config} ${_scur}/${_smax} Sessions Host is ${_ol}"
-    NOTIFY="${_name}-${_config}"
+    NOTIFY="haproxy_${_name}-${_config}"
     # use awk for math fucking bash could not handle float numbers
     th_warn=$(${awk_bin} '{print $1*$2}' <<< "${_smax} ${warn}")
     th_warn=$(${awk_bin} "BEGIN{printf \"%.0f\n\",${th_warn}}")

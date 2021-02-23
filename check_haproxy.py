@@ -52,4 +52,4 @@ for Entry in HAContent:
             CheckStatus = "0"
     else:
         CheckStatus = "2"
-    print("{0} {1}-{2} - {2} {3}/{4} Sessions Host is {5}".format(CheckStatus,HaStatusName,HaStatusElement,HASessionsCurrent,HASessionsMax,HAStatusState)) 
+    print("{0} haproxy_{1}-{2} - {2} {3}/{4} Sessions Host is {5}".format(CheckStatus,HaStatusName,HaStatusElement,HASessionsCurrent,HASessionsMax,HAStatusState)) 

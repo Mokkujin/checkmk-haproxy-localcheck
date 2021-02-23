@@ -95,5 +95,5 @@ foreach ($LineInArray in $HAArray){
         } else {
             $CheckStatus = '2'
         }
-        Write-Output -InputObject ('{0} {1}-{2} - {2} {3}/{4} Sessions Host is {5}' -f $CheckStatus, $HaStatusName, $HaStatusElement, $HASessionsCurrent, $HASessionsMax, $HAStatusState)
+        Write-Output -InputObject ('{0} haproxy_{1}-{2} - {2} {3}/{4} Sessions Host is {5}' -f $CheckStatus, $HaStatusName, $HaStatusElement, $HASessionsCurrent, $HASessionsMax, $HAStatusState)
 }
