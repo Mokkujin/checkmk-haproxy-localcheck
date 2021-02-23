@@ -1,4 +1,9 @@
 #/!/bin/bash
+####################################################################
+# script from https://github.com/Mokkujin/checkmk-haproxy-localcheck
+#
+# @ mokkujin
+####################################################################
 # do not change get awk binary
 awk_bin=$(which awk)
 #

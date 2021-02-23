@@ -1,4 +1,9 @@
 #!/usr/bin/env pwsh
+####################################################################
+# script from https://github.com/Mokkujin/checkmk-haproxy-localcheck
+#
+# @ mokkujin
+####################################################################
 $WIUser = ''
 $WIPass = ''
 $MWarnAt = 0.80

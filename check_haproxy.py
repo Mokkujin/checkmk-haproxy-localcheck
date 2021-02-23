@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 import requests, urllib3, sys
+####################################################################
+# script from https://github.com/Mokkujin/checkmk-haproxy-localcheck
+#
+# @ mokkujin
+####################################################################
 # disable ssl warning
 urllib3.disable_warnings()
 # define vars
