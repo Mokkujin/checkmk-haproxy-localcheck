@@ -11,6 +11,12 @@
 
 **check_haproxy.py** .. for sure needs **python3** :smirk:
 
+**check_haproxy_py2.py** .. use python2 for those people who obviously dont updated to the last stable version
+
+**check_haproxy.ps1** .. developed on powershell core for linux
+
+**haproxy_checkmk.sh** .. developed on an bash 4 machine 
+
 ## choose your version and install
 
 * its recommended to use the python version
