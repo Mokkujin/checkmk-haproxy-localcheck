@@ -29,7 +29,7 @@ crit="0.90" # = 90%
 for line in $(curl -s ${status_URL} | grep -vE "#" ); do
     _name=$(echo $line | ${awk_bin} -F',' '{ print $1; }' )
     _config=$(echo $line | ${awk_bin} -F',' '{ print $2; }' )
-    _smax=$(echo $line | ${awk_bin} -F',' '{ print $6; }' )
+    _smax=$(echo $line | ${awk_bin} -F',' '{ print $7; }' )
     _scur=$(echo $line | ${awk_bin} -F',' '{ print $5; }' )
     _ol=$(echo $line | ${awk_bin} -F',' '{ print $18; }' )
     STATUS="${_config} ${_scur}/${_smax} Sessions Host is ${_ol}"

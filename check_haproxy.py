@@ -34,7 +34,7 @@ for Entry in HAContent:
         HaStatusElement = LineArray[1]
         HAStatusState = LineArray[17]
         HASessionsCurrent = LineArray[4]
-        HASessionsMax = LineArray[5]
+        HASessionsMax = LineArray[6]
         # calc thresholds
         ThresholdWarning = round(int(HASessionsMax) * MWarnAt)
         ThresholdCritical = round(int(HASessionsMax) * MCritAt)

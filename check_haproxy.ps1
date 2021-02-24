@@ -6,7 +6,7 @@
 ####################################################################
 $WIUser = ''
 $WIPass = ''
-$MWarnAt = 0.80
+$MWarnAt = 0.85
 $MCritAt = 0.90
 # try to connect haproxy status page
 try {
@@ -58,7 +58,7 @@ foreach ($LineInArray in $HAArray){
             [string]$HaStatusElement = $LineArrayElements[1]
             [string]$HAStatusState = $LineArrayElements[17]
             [int]$HASessionsCurrent = [convert]::ToInt32($LineArrayElements[4])
-            [int]$HASessionsMax = [convert]::ToInt32($LineArrayElements[5])
+            [int]$HASessionsMax = [convert]::ToInt32($LineArrayElements[6])
             # calc thresholds
             [int]$ThresholdWarning = [math]::Round($HASessionsMax * $MWarnAt)
             [int]$ThresholdCritical = [math]::Round($HASessionsMax * $MCritAt)

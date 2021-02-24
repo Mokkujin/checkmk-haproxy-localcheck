@@ -37,7 +37,7 @@ for l in HAContent.splitlines():
         HaStatusElement = la[1]
         HAStatusState = la[17]
         HASessionsCurrent = la[4]
-        HASessionsMax = la[5]
+        HASessionsMax = la[6]
         # calc thresholds
         ThresholdWarning = round(int(HASessionsMax) * MWarnAt)
         ThresholdCritical = round(int(HASessionsMax) * MCritAt)
