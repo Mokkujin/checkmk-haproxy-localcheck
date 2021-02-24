@@ -14,6 +14,10 @@ WIPass = ''
 # define thresholds
 MWarnAt = 0.85
 MCritAt = 0.90
+HADefMax = 12000
+# monitore Backend & Frontend too ? if true you have to configure the backends
+# and frontends on the right way ;)
+MonBackFront = False
 # do check
 try:
     if WIPass != "":
@@ -38,6 +42,13 @@ for l in HAContent.splitlines():
         HAStatusState = la[17]
         HASessionsCurrent = la[4]
         HASessionsMax = la[6]
+        # if max sessions 0 or not defined use the default vaule 
+        if HASessionsMax == "" or HASessionsMax == "0":
+            HASessionsMax = HADefMax
+        # monitore only servers behind the backend
+        if MonBackFront == False:
+            if HaStatusElement == "BACKEND" or HaStatusElement == "FRONTEND":
+                continue
         # calc thresholds
         ThresholdWarning = round(int(HASessionsMax) * MWarnAt)
         ThresholdCritical = round(int(HASessionsMax) * MCritAt)
