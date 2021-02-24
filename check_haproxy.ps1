@@ -6,19 +6,22 @@
 ####################################################################
 $WIUser = ''
 $WIPass = ''
+$HaStatusUrl = 'https://localhost/lbstatistik;csv'
 $MWarnAt = 0.85
 $MCritAt = 0.90
+$HADefMax = 12000
+$MonBackFront = $false
 # try to connect haproxy status page
 try {
     If ($WIPass){
     $ParaIW = @{
-        URI = 'https://localhost/lbstatistik;csv'
+        URI = $HaStatusUrl
         SkipCertificateCheck = $true # if you use ssl
         Credential = (New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($WIUser,(ConvertTo-SecureString -String $WIPass -AsPlainText -Force)))
         }
     } else {
     $ParaIW = @{
-        URI = 'https://localhost/lbstatistik;csv'
+        URI = $HaStatusUrl
         SkipCertificateCheck = $true # if you use ssl
         }
     }
@@ -41,7 +44,7 @@ try {
     $info | Out-String | Write-Verbose
     Write-Error -Message ($info.Exception) -ErrorAction Continue
     # Only here to catch a global ErrorAction overwrite
-    #endregion ErrorHandler
+    # endregion ErrorHandler
     Write-Error -Message 'Error to connect to haproxy status page' -ErrorAction Stop -Category ResourceUnavailable -ErrorId 2
     exit 2
 } finally {
@@ -58,7 +61,23 @@ foreach ($LineInArray in $HAArray){
             [string]$HaStatusElement = $LineArrayElements[1]
             [string]$HAStatusState = $LineArrayElements[17]
             [int]$HASessionsCurrent = [convert]::ToInt32($LineArrayElements[4])
-            [int]$HASessionsMax = [convert]::ToInt32($LineArrayElements[6])
+            # read session limits if not set use default value
+            if ($LineArrayElements[6]){
+                [int]$HASessionsMax = [convert]::ToInt32($LineArrayElements[6])
+            } else {
+                [int]$HASessionsMax = $HADefMax
+            }
+            # if max sessions 0 or not defined use the default value 
+            if ($HASessionsMax -eq 0)  {
+                $HASessionsMax = $HADefMax
+            }
+
+            # monitore only servers behind the backend
+            if ( $MonBackFront -eq $false ) {
+                if (($HaStatusElement -eq "BACKEND") -or ($HaStatusElement -eq "FRONTEND")) {
+                    continue
+                }
+            }
             # calc thresholds
             [int]$ThresholdWarning = [math]::Round($HASessionsMax * $MWarnAt)
             [int]$ThresholdCritical = [math]::Round($HASessionsMax * $MCritAt)
@@ -78,7 +97,7 @@ foreach ($LineInArray in $HAArray){
             $info | Out-String | Write-Verbose
             Write-Error -Message ($info.Exception) -ErrorAction Continue
             # Only here to catch a global ErrorAction overwrite
-            #endregion ErrorHandler
+            # endregion ErrorHandler
             Write-Error -Message 'something went wrong check the output of your haproxy status page - could not declare vars' -ErrorAction Stop -Category InvalidData -ErrorId 3
             exit 3
         } finally {
