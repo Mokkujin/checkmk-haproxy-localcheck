@@ -13,6 +13,7 @@
 - [Requirements](#requirements)
 - [Install](#install)
 - [Configure](#configure)
+- [when will Alarms apear](#alarms)
 - [Example HaProxy Config](#haproxy)
 
 ---
@@ -77,6 +78,16 @@ MonBackFront = False
 | MCritAt    | threshold for check mean 90% of session limits is reached do an critical in checkmk |
 | HADefMax   | default maxconn for haproxy normaly it configured in default or global section of the haproxy.conf |
 | MonBackFront | monitore Backend & Frontend , if set to False then only the servers-nodes will be monitored |
+
+<a name="alarms"></a>
+## when will alarms appear
+
+
+| alarm in check_mk | description |
+| ----------------- | ........... |
+| critical          | server-node is down or configured threshold is reached |
+| warning           | the configured threshold is reached |
+| ok                | server-node is UP or OPEN and NO threshold is reached |
 
 <a name="haproxy"></a>
 ## sure you have to enable the status page on haproxy first
