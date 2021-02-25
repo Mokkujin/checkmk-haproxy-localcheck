@@ -39,6 +39,8 @@ last but not least i created the same job an powershell version Why :wink: ? Bec
 
 - **haproxy_checkmk.sh** .. developed on an bash 4 machine 
 
+- **src_go/check_haproxy.go** .. developed on go1.16
+
 <a name="install"></a>
 ## choose your version and install
 
