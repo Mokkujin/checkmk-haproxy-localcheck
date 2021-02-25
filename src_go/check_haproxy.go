@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-//build struct for json
+//Config is a struct for json
 type Config struct {
 	WIUser            string  `json:"WIUser"`
 	WIPass            string  `json:"WIPass"`
@@ -22,13 +22,13 @@ type Config struct {
 	MCritAt           float64 `json:"MCritAt"`
 }
 
-//load config from json file
+//LoadConfiguration load config from json file
 func LoadConfiguration(file string) (Config, error) {
 	var config Config
 	configFile, err := os.Open(file)
 	defer configFile.Close()
 	if err != nil {
-		fmt.Println(err.Error())
+		return config, err
 	}
 	jsonParser := json.NewDecoder(configFile)
 	err = jsonParser.Decode(&config)
@@ -37,10 +37,11 @@ func LoadConfiguration(file string) (Config, error) {
 
 //main function
 func main() {
-	CheckStatus := ""
+	CheckStatus := 2
 	config, err := LoadConfiguration("config.json")
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("could not load json config")
+		os.Exit(3)
 	}
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -55,7 +56,8 @@ func main() {
 	}
 	HAContent, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("error to read request")
+		os.Exit(1)
 	}
 	s := string(HAContent)
 	// analyze the output
@@ -85,25 +87,25 @@ func main() {
 		HAStatusState := hac[17]
 		HASessionsCurrent, err := strconv.Atoi(hac[4])
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("could not get current sessions")
+			os.Exit(5)
 		}
+
 		if HAStatusState == "OPEN" || HAStatusState == "UP" {
 			if HASessionsCurrent < ThWarning && HASessionsCurrent < ThCritical {
-				CheckStatus = "0"
+				CheckStatus = 0
 			}
 			if HASessionsCurrent >= ThWarning {
-				CheckStatus = "1"
+				CheckStatus = 1
 			}
 			if HASessionsCurrent >= ThCritical {
-				CheckStatus = "2"
+				CheckStatus = 2
 			}
 			if HASessionsMax == 0 || HASessionsCurrent == 0 {
-				CheckStatus = "0"
+				CheckStatus = 0
 			}
-
-		} else {
-			CheckStatus = "2"
 		}
-		fmt.Printf("%s haproxy_%s-%s - %s %d/%d Sessions Host is %s"+"\n", CheckStatus, HaStatusName, HaStatusElement, HaStatusElement, HASessionsCurrent, HASessionsMax, HAStatusState)
+
+		fmt.Printf("%d haproxy_%s-%s - %s %d/%d Sessions Host is %s"+"\n", CheckStatus, HaStatusName, HaStatusElement, HaStatusElement, HASessionsCurrent, HASessionsMax, HAStatusState)
 	}
 }
