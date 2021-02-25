@@ -82,12 +82,12 @@ MonBackFront = False
 <a name="alarms"></a>
 ## when will alarms appear
 
+| alarm  | description |
+| -------- | -------- |
+| critical          | server-node is down or configured threshold ```MCritAt``` of session limits is greater or equal |
+| warning           | the configured threshold ```MWarnAt``` of session limits is greater or equal but lower then ```MCritAt``` |
+| ok                | server-node is UP or OPEN and **NO** threshold is reached |
 
-| alarm in check_mk | description |
-| ----------------- | ........... |
-| critical          | server-node is down or configured threshold is reached |
-| warning           | the configured threshold is reached |
-| ok                | server-node is UP or OPEN and NO threshold is reached |
 
 <a name="haproxy"></a>
 ## sure you have to enable the status page on haproxy first
