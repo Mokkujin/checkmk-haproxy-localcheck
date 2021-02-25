@@ -35,9 +35,28 @@ func LoadConfiguration(file string) (Config, error) {
 	return config, err
 }
 
+//GetCheckStatus asdf asd
+func GetCheckStatus(ThWarning int, ThCritical int, HASessionsMax int, HASessionsCurrent int, HAStatusState string) int {
+	CheckStatus := 2
+	if HAStatusState == "OPEN" || HAStatusState == "UP" {
+		if HASessionsCurrent < ThWarning && HASessionsCurrent < ThCritical {
+			CheckStatus = 0
+		}
+		if HASessionsCurrent >= ThWarning {
+			CheckStatus = 1
+		}
+		if HASessionsCurrent >= ThCritical {
+			CheckStatus = 2
+		}
+		if HASessionsMax == 0 || HASessionsCurrent == 0 {
+			CheckStatus = 0
+		}
+	}
+	return CheckStatus
+}
+
 //main function
 func main() {
-	CheckStatus := 2
 	config, err := LoadConfiguration("config.json")
 	if err != nil {
 		fmt.Println("could not load json config")
@@ -91,21 +110,8 @@ func main() {
 			os.Exit(5)
 		}
 
-		if HAStatusState == "OPEN" || HAStatusState == "UP" {
-			if HASessionsCurrent < ThWarning && HASessionsCurrent < ThCritical {
-				CheckStatus = 0
-			}
-			if HASessionsCurrent >= ThWarning {
-				CheckStatus = 1
-			}
-			if HASessionsCurrent >= ThCritical {
-				CheckStatus = 2
-			}
-			if HASessionsMax == 0 || HASessionsCurrent == 0 {
-				CheckStatus = 0
-			}
-		}
+		ckSt := GetCheckStatus(ThWarning, ThCritical, HASessionsMax, HASessionsCurrent, HAStatusState)
 
-		fmt.Printf("%d haproxy_%s-%s - %s %d/%d Sessions Host is %s"+"\n", CheckStatus, HaStatusName, HaStatusElement, HaStatusElement, HASessionsCurrent, HASessionsMax, HAStatusState)
+		fmt.Printf("%d haproxy_%s-%s - %s %d/%d Sessions Host is %s"+"\n", ckSt, HaStatusName, HaStatusElement, HaStatusElement, HASessionsCurrent, HASessionsMax, HAStatusState)
 	}
 }
