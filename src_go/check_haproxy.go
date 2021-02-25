@@ -35,7 +35,7 @@ func LoadConfiguration(file string) (Config, error) {
 	return config, err
 }
 
-//GetCheckStatus asdf asd
+//GetCheckStatus check values and return int for check_mk
 func GetCheckStatus(ThWarning int, ThCritical int, HASessionsMax int, HASessionsCurrent int, HAStatusState string) int {
 	CheckStatus := 2
 	if HAStatusState == "OPEN" || HAStatusState == "UP" {
